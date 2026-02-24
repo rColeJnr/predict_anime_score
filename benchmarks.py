@@ -6,15 +6,11 @@ import onnxmltools
 from onnxmltools.convert.common.data_types import FloatTensorType
 import xgboost as xgb
 
-# 1. Prepare dummy data (must be float32 for ONNX)
 dummy_input = np.random.rand(1, 44).astype(np.float32)
 
-# 2. Load the original model
 with open('anime_data_model.pkl', 'rb') as f:
     model_pkl = pickle.load(f)
 
-# --- CONVERSION STEP (WITH FIX) ---
-# Extract booster and strip feature names to avoid the string-to-float error
 if hasattr(model_pkl, "get_booster"):
     booster = model_pkl.get_booster()
 else:
