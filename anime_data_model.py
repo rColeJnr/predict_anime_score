@@ -111,9 +111,9 @@ grid_search.fit(X_train, y_train)
 print(f"Best Parameters: {grid_search.best_params_}")
 best_model = grid_search.best_estimator_
 
-y_pred_best = best_model.predict(X_test)
+y_pred_best = best_model.predict(X_test) # 0.401
 print(f"Optimized MAE: {mean_absolute_error(y_test, y_pred_best):.3f}")
-print(f"Optimized R^2: {r2_score(y_test, y_pred_best):.3f}")
+print(f"Optimized R^2: {r2_score(y_test, y_pred_best):.3f}") # 0.5
 
 # Extracting the weights
 coeff_df = pd.DataFrame({
@@ -161,13 +161,15 @@ plt.title('XGBoost Residuals (Errors) Distribution')
 plt.xlabel('Prediction Error (Actual - Predicted)')
 plt.show()
 
-#saving model on device
+# saving model on device
 
 import pickle
 with open('anime_data_model.pkl', 'wb') as file:
     pickle.dump(best_model, file)
 
 print("Model successfully saved")
+
+# Testing model
 
 with open('anime_data_model.pkl', 'rb') as file:
     loaded_model = pickle.load(file)
