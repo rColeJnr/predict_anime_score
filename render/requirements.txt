@@ -3,3 +3,4 @@ onnxruntime
 pydantic
 typing
 numpy
+uvicorn
