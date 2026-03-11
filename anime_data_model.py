@@ -21,7 +21,6 @@ top_themes = [
     'theme_time_travel', 'theme_racing', 'theme_delinquents', 'theme_detective', 
     'theme_medical', 'theme_military', 'theme_samurai', 'theme_school'
 ]
-metrics = ['score', 'popularity', 'episodes', 'favorites']
 
 df['log_favorites'] = np.log1p(df['favorites'])
 
