@@ -18,7 +18,7 @@ anime_data_api.add_middleware(
 )
 
 try:
-    session = rt.InferenceSession('anime_predictor.onnx', providers=onnxruntime.get_available_providers())
+    session = onnxruntime.InferenceSession('anime_predictor.onnx', providers=onnxruntime.get_available_providers())
     logger.info("ONNX model loaded successfully.")
 except Exception as e:
     logger.error(f"Error: Could not load ONNX model: {e}")
@@ -72,7 +72,7 @@ def get_prediction(data):
 def root():
     return {'message': 'Welcome to the Anime Score Predictor API.'}
 
-@app.get("/health")
+@anime_data_api.get("/health")
 def health():
     return {"status": "alive", "model_loaded": session is not None}
 
