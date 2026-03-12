@@ -29,6 +29,7 @@ df_model = pd.concat([df, rating_dummies], axis = 1)
 
 
 X = pd.concat([
+    df[['log_episodes', 'log_favorites']], 
     df[top_genres], 
     df[top_themes],
     rating_dummies
