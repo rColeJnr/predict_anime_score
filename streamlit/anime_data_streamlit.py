@@ -38,6 +38,7 @@ def get_prediction(genres, themes, rating, episodes):
         return None
 
 st.title("Anime Score Predictor")
+st.markdown("Fill in the details below to see how the community might rate your anime idea.")
 
 with st.form('prediction_form'):
 

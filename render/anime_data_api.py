@@ -1,9 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 import onnxruntime
-from pydantic import BaseModel
-from typing import List
+from pydantic import BaseModel, Field
 import numpy
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 anime_data_api = FastAPI(title= "Anime Score Predictor API")
 
@@ -14,13 +17,18 @@ anime_data_api.add_middleware(
     allow_headers=["*"],
 )
 
-session = onnxruntime.InferenceSession('anime_predictor.onnx', providers = onnxruntime.get_available_providers())
+try:
+    session = rt.InferenceSession('anime_predictor.onnx', providers=onnxruntime.get_available_providers())
+    logger.info("ONNX model loaded successfully.")
+except Exception as e:
+    logger.error(f"Error: Could not load ONNX model: {e}")
+    session = None
 
 class AnimeRequest(BaseModel):
-    genres: List[str]
-    themes: List[str]
-    rating: str
-    episodes: int = 12
+    genres: list[str] = Field(default_factory=list)
+    themes: list[str] = Field(default_factory=list)
+    rating: str = Field(..., example="PG-13")
+    episodes: int = Field(default=12, ge=1, le=1000)
 
 FEATURES = [
     'log_episodes',
@@ -64,15 +72,26 @@ def get_prediction(data):
 def root():
     return {'message': 'Welcome to the Anime Score Predictor API.'}
 
+@app.get("/health")
+def health():
+    return {"status": "alive", "model_loaded": session is not None}
+
 @anime_data_api.post("/predict")
 async def predict_anime_score(req: AnimeRequest):
-    input_tensor = preprocess(req)
-
-    input_name = session.get_inputs()[0].name
-    output_name = session.get_outputs()[0].name
-    prediction = session.run([output_name], {input_name: input_tensor})
+    if session is None:
+        raise HTTPException(status_code=503, detail="Model not loaded on server.")
     
-    return {
-        "predicted_score": float(prediction[0].item()),
-        "status": "success"
-    }
+    try:
+        input_tensor = preprocess(req)
+
+        input_name = session.get_inputs()[0].name
+        output_name = session.get_outputs()[0].name
+        prediction = session.run([output_name], {input_name: input_tensor})
+        
+        return {
+            "predicted_score": float(prediction[0].item()),
+            "status": "success"
+        }
+    except:
+        logger.error(f"Inference error: {e}")
+        raise HTTPException(status_code=500, detail="Internal prediction error.")
