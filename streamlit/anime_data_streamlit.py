@@ -3,7 +3,7 @@ import streamlit as st
 import requests
 
 top_genres = [
-    'mystery', 'suspense', 'sports', 'drama', 'slice_of_life', 
+    'mystery' 'suspense', 'sports', 'drama', 'slice_of_life', 
     'romance', 'adventure', 'supernatural', 'gourmet', 'action', 
     'fantasy', 'comedy', 'sci-fi'
 ]
@@ -16,14 +16,18 @@ top_themes = [
     'theme_medical', 'theme_military', 'theme_samurai', 'theme_school'
 ]
 
-API_URL = "no deployment url yet"
+API_URL = "https://anime-score-predictor.onrender.com/predict"
 
 st.title("Anime Score Predictor")
 st.write("Predict the My Anime List score of your favorite anime")
 
 with st.form('prediction_form'):
+
+    col1, col2 = st.columns(2)
+    with col1:
+        eps = st.number_input("Episodes", min_value=1, value=12)
     col = st.columns(1)
-    with col:
+    with col2:
         rating = st.selectbox("Rating:", ["PG", "PG-13", "R", "R+", "Rx"])
 
     genre_selection = st.multiselect("Genres:", top_genres)
@@ -32,16 +36,10 @@ with st.form('prediction_form'):
     submit = st.form_submit_button("Predict Score")
 
 if submit:
-    payload = {
-        'genres': genre_selection,
-        'themes': theme_selection,
-        'rating': rating
-    }
+   
+    result = get_prediction(genre_selection, theme_selection, rating, eps)
 
-    response = requests.post(API_URL, json=payload)
-
-    if response.status_code == 200:
-        result = response.json()['predicted_score']
+    if result is not None:
         st.metric(label="Predicted Score", value=f"{result:.3f}")
         if result >= 8.0:
             st.success('This sounds like a good anime, but is it better than Jujutsu Kaisen?')
@@ -49,5 +47,22 @@ if submit:
             st.info("Not bad, but Gojou Satoru wouldn't waste his time watching this.")
         else:
             st.info("The only acceptable anime here is: Город в котором меня нет.")
-    else:
-        st.error("Failed to get prediction from the server.")
+    
+def get_prediction(genres, themes, rating, episodes):
+    payload = {
+        'genres': genre_selection,
+        'themes': theme_selection,
+        'rating': rating,
+        'episodes': eps
+    }
+    
+    try:
+        response = requests.post(API_URL, json=payload)
+        if response.status_code == 200:
+            return response.json().get("predicted_score")
+        else:
+            st.error(f"Backend Error: {response.status_code}")
+            return None
+    except Exception as e:
+        st.error(f"Could not connect to the API: {e}")
+        return None
