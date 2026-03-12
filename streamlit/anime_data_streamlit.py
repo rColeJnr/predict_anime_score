@@ -24,7 +24,6 @@ def get_prediction(genres, themes, rating, episodes):
         'themes': themes,
         'rating': rating,
         'episodes': episodes,
-        'favorites': 5000
     }
     
     try:
@@ -60,7 +59,7 @@ if submit:
 
     if result is not None:
         st.metric(label="Predicted Score", value=f"{result:.3f}")
-        if result >= 8.0:
+        if result >= 6.7:
             st.success('This sounds like a good anime, but is it better than Jujutsu Kaisen?')
         elif result >= 6.5:
             st.info("Not bad, but Gojou Satoru wouldn't waste his time watching this.")
