@@ -52,17 +52,19 @@ with st.form('prediction_form'):
     genre_selection = st.multiselect("Genres:", top_genres)
     theme_selection = st.multiselect("Themes:", top_themes)
 
-    submit = st.form_submit_button("Predict Score")
+    submit = st.form_submit_button("✨ Predict Score", use_container_width=True)
 
 if submit:
-   
-    result = get_prediction(genre_selection, theme_selection, rating, eps)
+    if not genre_selection and not theme_selection:
+        st.warning("Please select at least one genre or theme to get an accurate prediction!")
+    with st.spinner("Processing..."):
+        result = get_prediction(genre_selection, theme_selection, rating, eps)
 
     if result is not None:
         st.metric(label="Predicted Score", value=f"{result:.3f}")
-        if result >= 6.7:
+        if result >= 7.2:
             st.success('This sounds like a good anime, but is it better than Jujutsu Kaisen?')
-        elif result >= 6.5:
+        elif result >= 6.7:
             st.info("Not bad, but Gojou Satoru wouldn't waste his time watching this.")
         else:
             st.info("The only acceptable anime here is: Город в котором меня нет.")
