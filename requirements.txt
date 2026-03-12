@@ -1,0 +1,10 @@
+# API Backend
+fastapi
+uvicorn
+onnxruntime
+pydantic
+numpy
+
+# Frontend (Streamlit)
+streamlit
+requests

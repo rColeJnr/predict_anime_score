@@ -92,6 +92,6 @@ async def predict_anime_score(req: AnimeRequest):
             "predicted_score": float(prediction[0].item()),
             "status": "success"
         }
-    except:
+    except Exception as e:
         logger.error(f"Inference error: {e}")
         raise HTTPException(status_code=500, detail="Internal prediction error.")
