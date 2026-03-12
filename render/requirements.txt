@@ -1,0 +1,6 @@
+fastapi
+onnxruntime
+pydantic
+typing
+numpy
+uvicorn
