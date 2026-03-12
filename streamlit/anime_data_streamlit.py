@@ -18,8 +18,26 @@ top_themes = [
 
 API_URL = "https://anime-score-predictor.onrender.com/predict"
 
+def get_prediction(genres, themes, rating, episodes):
+    payload = {
+        'genres': genre_selection,
+        'themes': theme_selection,
+        'rating': rating,
+        'episodes': episodes
+    }
+    
+    try:
+        response = requests.post(API_URL, json=payload)
+        if response.status_code == 200:
+            return response.json().get("predicted_score")
+        else:
+            st.error(f"Backend Error: {response.status_code}")
+            return None
+    except Exception as e:
+        st.error(f"Could not connect to the API: {e}")
+        return None
+
 st.title("Anime Score Predictor")
-st.write("Predict the My Anime List score of your favorite anime")
 
 with st.form('prediction_form'):
 
@@ -47,22 +65,3 @@ if submit:
             st.info("Not bad, but Gojou Satoru wouldn't waste his time watching this.")
         else:
             st.info("The only acceptable anime here is: Город в котором меня нет.")
-    
-def get_prediction(genres, themes, rating, episodes):
-    payload = {
-        'genres': genre_selection,
-        'themes': theme_selection,
-        'rating': rating,
-        'episodes': eps
-    }
-    
-    try:
-        response = requests.post(API_URL, json=payload)
-        if response.status_code == 200:
-            return response.json().get("predicted_score")
-        else:
-            st.error(f"Backend Error: {response.status_code}")
-            return None
-    except Exception as e:
-        st.error(f"Could not connect to the API: {e}")
-        return None
