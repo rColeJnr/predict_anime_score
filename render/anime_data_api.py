@@ -73,6 +73,6 @@ async def predict_anime_score(req: AnimeRequest):
     prediction = session.run([output_name], {input_name: input_tensor})
     
     return {
-        "predicted_score": float(prediction[0][0]),
+        "predicted_score": float(prediction[0].item()),
         "status": "success"
     }
