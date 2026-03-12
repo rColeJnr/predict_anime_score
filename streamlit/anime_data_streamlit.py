@@ -3,7 +3,7 @@ import streamlit as st
 import requests
 
 top_genres = [
-    'mystery' 'suspense', 'sports', 'drama', 'slice_of_life', 
+    'mystery', 'suspense', 'sports', 'drama', 'slice_of_life', 
     'romance', 'adventure', 'supernatural', 'gourmet', 'action', 
     'fantasy', 'comedy', 'sci-fi'
 ]
@@ -20,10 +20,11 @@ API_URL = "https://anime-score-predictor.onrender.com/predict"
 
 def get_prediction(genres, themes, rating, episodes):
     payload = {
-        'genres': genre_selection,
-        'themes': theme_selection,
+        'genres': genres,
+        'themes': themes,
         'rating': rating,
-        'episodes': episodes
+        'episodes': episodes,
+        'favorites': 5000
     }
     
     try:

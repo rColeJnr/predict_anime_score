@@ -20,8 +20,8 @@ class AnimeRequest(BaseModel):
     genres: List[str]
     themes: List[str]
     rating: str
-    episodes: int = 35  # Default value for MVP
-    favorites: int = 75000 # Default value for MVP
+    episodes: int = 12
+    favorites: int = 5000
 
 FEATURES = [
     'log_episodes', 'log_favorites',
@@ -51,7 +51,9 @@ def preprocess(req: AnimeRequest):
     if rating_col in input_data:
         input_data[rating_col] = 1.0
     
-    return numpy.array([list(input_data.values())], dtype=numpy.float32)
+    ordered_values = [input_data[col] for col in FEATURES]
+
+    return numpy.array([list(ordered_values)], dtype=numpy.float32)
 
 
 def get_prediction(data):
