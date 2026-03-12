@@ -21,10 +21,9 @@ class AnimeRequest(BaseModel):
     themes: List[str]
     rating: str
     episodes: int = 12
-    favorites: int = 5000
 
 FEATURES = [
-    'log_episodes', 'log_favorites',
+    'log_episodes',
     'mystery', 'suspense', 'sports', 'drama', 
     'slice_of_life', 'romance', 'adventure', 'supernatural', 'gourmet', 'action', 
     'fantasy', 'comedy', 'sci-fi', 'theme_iyashikei', 'theme_childcare', 
@@ -41,7 +40,6 @@ def preprocess(req: AnimeRequest):
     input_data = {col: 0.0 for col in FEATURES}
 
     input_data['log_episodes'] = numpy.log1p(req.episodes)
-    input_data['log_favorites'] = numpy.log1p(req.favorites)
 
     for g in req.genres:
         if g in input_data: input_data[g] = 1.0
